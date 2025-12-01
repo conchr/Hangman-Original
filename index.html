@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Παιχνίδι Κρεμάλα - Τελική Βελτιωμένη Έκδοση</title>
+    <title>Παιχνίδι Κρεμάλα</title>
     <style>
         /* CSS VARIABLES ΓΙΑ ΕΥΕΛΙΞΙΑ */
         :root {
@@ -41,14 +41,47 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-image: url('https://raw.githubusercontent.com/conchr/Hangman-Original/main/Hangman%20Start.jpg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
             background-color: #000;
             z-index: 1000;
             transition: opacity 1.5s ease-in-out;
             opacity: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .splash-content {
+            position: relative;
+            width: 100%;
+            max-width: 799px;
+            height: 100%;
+            max-height: 799px;
+            background-image: url('https://raw.githubusercontent.com/conchr/Hangman-Original/main/Hangman%20Background.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .splash-text {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 96px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            animation: splashColorChange 2s infinite alternate;
+            margin-bottom: 100px;
+        }
+        
+        @keyframes splashColorChange {
+            0% { color: #ff0000; }
+            25% { color: #ffff00; }
+            50% { color: #00ff00; }
+            75% { color: #00ffff; }
+            100% { color: #ff00ff; }
         }
         
         .image-container {
@@ -56,6 +89,8 @@
             width: 100%;
             max-width: 799px;
             overflow: hidden; 
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
         
         .background-image {
@@ -128,89 +163,6 @@
             to { opacity: 1; }
         }
 
-        /* ΚΛΑΣΕΙΣ ΓΙΑ ΤΟ GAME STATE */
-        .game-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 799px;
-            width: 100%;
-        }
-
-        .error-counter {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        button {
-            padding: 8px 16px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #45a049;
-        }
-
-        button.reset {
-            background: #f44336;
-        }
-
-        button.reset:hover {
-            background: #d32f2f;
-        }
-
-        button.win {
-            background: #2196F3;
-        }
-
-        button.win:hover {
-            background: #0b7dda;
-        }
-
-        /* ΒΕΛΤΙΩΜΕΝΗ ΤΑΛΑΝΤΩΣΗ */
-        @keyframes swing {
-            0% {
-                transform: rotate(20deg);
-            }
-            50% {
-                transform: rotate(-20deg);
-            }
-            100% {
-                transform: rotate(20deg);
-            }
-        }
-
-        .swinging {
-            animation: swing 3s ease-in-out infinite;
-        }
-
-        @keyframes initial-swing {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(20deg);
-            }
-        }
-
-        .swinging-initial {
-            animation: initial-swing 1s ease-in-out forwards;
-        }
-
         /* Κείμενο ΕΧΑΣΕΣ */
         .lost-text {
             position: absolute;
@@ -280,7 +232,7 @@
             animation: fadeOut 2s ease-in-out forwards;
         }
 
-        /* Win Image */
+        /* Win Image - ανέβασμα 50 pixels πιο ψηλά */
         .win-image {
             position: absolute;
             width: 120px;
@@ -289,11 +241,10 @@
             z-index: 25;
             opacity: 0;
             left: calc(50% - 150px);
-            top: calc(50% + 50px);
+            top: calc(50% + 0px); /* Αλλαγή από 50px σε 0px */
             background: transparent;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
-            /* Διάφανο φόντο για GIF */
             filter: brightness(1.1) contrast(1.1);
             mix-blend-mode: multiply;
         }
@@ -337,14 +288,13 @@
             text-align: center;
             width: 100%;
             line-height: 1.5;
-            /* Βελτίωση για πολύ-λεκτικές φράσεις */
             white-space: pre-wrap;
             word-wrap: break-word;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 15px; /* Απόσταση μεταξύ των σειρών */
+            gap: 15px;
         }
         
         .word-row {
@@ -353,6 +303,53 @@
             align-items: center;
             flex-wrap: nowrap;
             white-space: nowrap;
+        }
+        
+        /* Νέα κλάση για το scrolling κείμενο */
+        .scrolling-text-container {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            overflow: hidden;
+            z-index: 30;
+        }
+        
+        .scrolling-text {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            white-space: nowrap;
+            position: absolute;
+            animation: scrollText 15s linear infinite;
+            padding: 10px 0;
+        }
+        
+        @keyframes scrollText {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        
+        .explanation-display {
+            font-size: 14px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            width: 100%;
+            line-height: 1.4;
+            padding: 10px;
+            display: none;
+            overflow-y: auto;
+            max-height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
         }
         
         .keyboard-container {
@@ -484,15 +481,60 @@
             opacity: 0 !important;
         }
 
-        .game-controls {
-            display: flex;
+        /* Κουμπιά τέλους παιχνιδιού */
+        .game-over-buttons {
+            position: absolute;
+            z-index: 30;
+            display: none;
+            flex-direction: column;
             gap: 10px;
-            margin-top: 15px;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-over-btn {
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .play-again-btn {
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+        }
+        
+        .play-again-btn:hover {
+            background: rgba(39, 174, 96, 1);
+            transform: scale(1.05);
+        }
+        
+        .return-btn {
+            background: rgba(155, 89, 182, 0.9);
+            color: white;
+        }
+        
+        .return-btn:hover {
+            background: rgba(142, 68, 173, 1);
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <div id="splashScreen"></div>
+    <div id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-text">ΚΡΕΜΑΛΑ</div>
+        </div>
+    </div>
 
     <div class="image-container" id="imageContainer">
         <!-- Εικόνα Φόντου (Κενή Κρεμάλα) -->
@@ -514,9 +556,15 @@
             <div id="leftFootPart" class="hanged-man-part" data-error="Error 7"></div>
         </div>
 
-        <!-- Εμφάνιση Λέξης -->
+        <!-- Scrolling Text για τη λέξη -->
+        <div class="scrolling-text-container" id="scrollingTextContainer">
+            <div class="scrolling-text" id="scrollingText"></div>
+        </div>
+
+        <!-- Εμφάνιση Λέξης και Επεξήγησης -->
         <div class="word-display-container" id="wordDisplayContainer">
             <div class="word-display" id="wordDisplay"></div>
+            <div class="explanation-display" id="explanationDisplay"></div>
         </div>
 
         <!-- Πληκτρολόγιο -->
@@ -534,6 +582,12 @@
                 Χρησιμοποιημένα γράμματα: <span id="usedLetters"></span>
             </div>
             <button class="reset-btn" onclick="resetGame()">Νέο Παιχνίδι</button>
+        </div>
+
+        <!-- Κουμπιά τέλους παιχνιδιού -->
+        <div class="game-over-buttons" id="gameOverButtons">
+            <button class="game-over-btn play-again-btn" onclick="playAgain()">Παίξε Πάλι</button>
+            <button class="game-over-btn return-btn" onclick="returnToGames()">Επιστροφή</button>
         </div>
 
         <!-- Κείμενο ΕΧΑΣΕΣ -->
@@ -557,32 +611,213 @@
         <div class="fixed-area score-area" id="scoreArea"></div>
     </div>
 
-    <!-- ΠΛΗΡΟΦΟΡΙΕΣ ΚΑΙ ΕΛΕΓΧΟΙ ΠΑΙΧΝΙΔΙΟΥ -->
-    <div class="game-info">
-        <div class="error-counter" id="errorCounter">Σφάλματα: 0/7</div>
-        <div class="game-controls">
-            <button id="startBtn">Έναρξη Παιχνιδιού</button>
-            <button id="winBtn" class="win">Νίκη</button>
-            <button id="resetBtn" class="reset">Επαναφορά</button>
-        </div>
-    </div>
-
     <script>
         // ΣΤΑΘΕΡΕΣ ΚΑΙ ΜΕΤΑΒΛΗΤΕΣ ΠΑΙΧΝΙΔΙΟΥ
         const HANGMAN_WIDTH_REF = 100;
         const HANGMAN_HEIGHT_REF = 207;
         
-        const words = [
-            "Ιπποδάμειο Σχέδιο", "Εξωτερικό τείχος", "Αμυντικοί πύργοι", "Κύριες πύλες", "Μικρές είσοδοι",
-            "Ακρόπολη", "Υψόμετρο", "Διατειχίσματα", "Αγορά", "Κανονικό σχέδιο", "Αρχαία Πόλη", 
-            "Κάστρο Καλλιθέας", "Ελληνιστική ακμή", "Χρονολόγηση", "Εγκατάλειψη", "Επέκταση",
-            "Θολωτοί τάφοι", "Ερείπια", "Φάρσαλα", "Ανασκαφές", "Κοινό Αχαΐας", "Πολιτικός ρόλος",
-            "Νομισματοκοπία", "Χάλκινα νομίσματα", "Συνοριακές διαφορές", "Δελφοί", "Γειτονική Πόλη",
-            "Διαφωνία", "Αυτονομία", "Θεσμοί", "Βάρη αργαλειού", "Υφαντική", "Κεραμικά",
-            "Πήλινα ειδώλια", "Θυμιατήρια", "Πτολεμαϊκό νόμισμα", "Εμπόριο κεραμικής", "Κατοικία",
-            "Μεταλλικά ευρήματα", "Ανασκαφή", "Καναδικό Ινστιτούτο", "Συνεργαζόμενοι", 
-            "Επιφανειακή έρευνα", "Χωρική οργάνωση", "Διατήρηση", "Στρατιωτικός χαρακτήρας",
-            "Αστική εξέλιξη", "Περιφερειακό δίκτυο", "Στρατηγική δίοδος", "Θεσσαλία"
+        // Λέξεις με τις αντίστοιχες επεξηγήσεις
+        const wordData = [
+            {
+                word: "Ιπποδάμειο Σχέδιο",
+                explanation: "Είναι το ορθογώνιο και κανονικό πολεοδομικό σχέδιο (πλέγμα) που εφαρμόστηκε στην πόλη κατά την επέκταση της ελληνιστικής περιόδου, από τις αρχές του 3ου αιώνα π.Χ."
+            },
+            {
+                word: "Εξωτερικό τείχος",
+                explanation: "Η συνολική του περίμετρος έφτανε τα 2,4 χιλιόμετρα και αποτελούσε το ισχυρό αμυντικό σύστημα της πόλης, χαρακτηριστικό των ελληνιστικών οχυρώσεων."
+            },
+            {
+                word: "Αμυντικοί πύργοι",
+                explanation: "Η οχύρωση ενισχυόταν συνολικά από 49 τέτοιους πύργους, οι οποίοι ήταν στρατηγικά τοποθετημένοι για να αντέχουν σε πολιορκίες και να στηρίζουν καταπέλτες."
+            },
+            {
+                word: "Κύριες πύλες",
+                explanation: "Ήταν οι δύο μεγάλες είσοδοι, η ανατολική και η δυτική, που επέτρεπαν την κύρια πρόσβαση στην οχυρωμένη πόλη, λειτουργώντας ως σημεία ελέγχου."
+            },
+            {
+                word: "Μικρές είσοδοι",
+                explanation: "Πρόκειται για τις πέντε μικρότερες, δευτερεύουσες εισόδους που υπήρχαν στα τείχη, πιθανώς για τη διαφυγή ή τον ανεφοδιασμό σε περιόδους πολιορκίας."
+            },
+            {
+                word: "Ακρόπολη",
+                explanation: "Το αρχαιότερο οχυρωμένο τμήμα της πόλης, το οποίο βρισκόταν στο ανατολικό ύψωμα και χρονολογείται από τον 4ο αιώνα π.Χ."
+            },
+            {
+                word: "Υψόμετρο",
+                explanation: "Η στρατηγική θέση της πόλης ήταν σε λόφο με υψόμετρο 618 μέτρων, προσφέροντας έλεγχο στη δίοδο προς την πεδιάδα του Αλμυρού."
+            },
+            {
+                word: "Διατειχίσματα",
+                explanation: "Είναι οι δύο εσωτερικοί τοίχοι που υπήρχαν μέσα στην πόλη και λειτουργούσαν ως πρόσθετοι αμυντικοί μηχανισμοί."
+            },
+            {
+                word: "Αγορά",
+                explanation: "Το κέντρο της πόλης, ένας δημόσιος χώρος που φιλοξενούσε τις πολιτικές, εμπορικές και θρησκευτικές δραστηριότητες των κατοίκων της Πεύμα."
+            },
+            {
+                word: "Κανονικό σχέδιο",
+                explanation: "Η γενική διάταξη της πόλης, η οποία έγινε ενιαία και ορθογώνια κατά τη μεγάλη επέκταση και οχύρωσή της στις αρχές του 3ου αιώνα π.Χ."
+            },
+            {
+                word: "Αρχαία Πόλη",
+                explanation: "Η πιθανή ταύτιση της αρχαιολογικής θέσης είναι με την πόλη-κράτος Πεύμα ή Πεύματα, γνωστή από ιστορικές επιγραφές."
+            },
+            {
+                word: "Κάστρο Καλλιθέας",
+                explanation: "Η σύγχρονη ονομασία της περιοχής, στον Δήμο Φαρσάλων, όπου βρίσκονται τα ερείπια της αρχαίας πόλης."
+            },
+            {
+                word: "Ελληνιστική ακμή",
+                explanation: "Η περίοδος της μεγαλύτερης ανάπτυξης, άνθησης και έντονης κατοίκησης της Πεύμα, που εκτείνεται από τον 3ο έως τον 1ο αιώνα π.Χ."
+            },
+            {
+                word: "Χρονολόγηση",
+                explanation: "Η κύρια περίοδος κατοίκησης της πόλης εκτείνεται από την Ύστερη Κλασική εποχή (4ος αιώνας π.Χ.) μέχρι και τους πρώτους ρωμαϊκούς χρόνους."
+            },
+            {
+                word: "Εγκατάλειψη",
+                explanation: "Η πόλη εγκαταλείφθηκε ξαφνικά γύρω στο 265 π.Χ., ένα γεγονός που πιθανώς συνδέεται με κάποια πολεμική σύγκρουση."
+            },
+            {
+                word: "Επέκταση",
+                explanation: "Η εποχή κατά την οποία εφαρμόστηκε το μεγάλο, εκτεταμένο ορθογώνιο ρυμοτομικό σχέδιο στην πόλη, δηλαδή στις αρχές του 3ου αιώνα π.Χ."
+            },
+            {
+                word: "Θολωτοί τάφοι",
+                explanation: "Αυτοί οι τάφοι βρέθηκαν στις υπώρειες του βουνού και χρονολογούνται πολύ παλαιότερα, συγκεκριμένα στην Εποχή του Σιδήρου (11ος αιώνας π.Χ.)."
+            },
+            {
+                word: "Ερείπια",
+                explanation: "Τα κατάλοιπα των τειχών, των πύργων και των κτιρίων που διατηρούνται σε πολύ καλή κατάσταση και είναι ορατά μέχρι σήμερα."
+            },
+            {
+                word: "Φάρσαλα",
+                explanation: "Η σύγχρονη περιοχή, κοντά στην οποία βρίσκεται η αρχαιολογική θέση, και ο Δήμος που υποστηρίζει το ανασκαφικό έργο."
+            },
+            {
+                word: "Ανασκαφές",
+                explanation: "Οι συστηματικές έρευνες των θολωτών τάφων στις υπώρειες του βουνού και η μετέπειτα έρευνα της πόλης."
+            },
+            {
+                word: "Κοινό Αχαΐας",
+                explanation: "Η Πεύμα ήταν μέλος αυτής της συνομοσπονδίας πόλεων της Αχαΐας Φθιώτιδος, γεγονός που καθόριζε τη συμμαχική της πολιτική θέση."
+            },
+            {
+                word: "Πολιτικός ρόλος",
+                explanation: "Η πόλη ήταν ένα δομημένο κέντρο με δικούς της θεσμούς, όπως φαίνεται από τη συμμετοχή της σε κοινά και την κοπή νομίσματος."
+            },
+            {
+                word: "Νομισματοκοπία",
+                explanation: "Η ικανότητα της πόλης να κόβει τα δικά της χάλκινα νομίσματα, με την επιγραφή «ΠΕΥΜΑΤΙΩΝ», δείχνει την αυτονομία της."
+            },
+            {
+                word: "Χάλκινα νομίσματα",
+                explanation: "Αυτά τα νομίσματα κόπηκαν από την Πεύμα μεταξύ του 302 και του 286 π.Χ. και αποτελούν βασικό εύρημα της πολιτικής της ανεξαρτησίας."
+            },
+            {
+                word: "Συνοριακές διαφορές",
+                explanation: "Καταγεγραμμένες διαμάχες με γειτονικές πόλεις, όπως η Μελιταία και οι Φιλιαδών, για τα όρια της επικράτειας της Πεύμα."
+            },
+            {
+                word: "Δελφοί",
+                explanation: "Η περιοχή όπου βρέθηκαν επιγραφές που τεκμηριώνουν την επίλυση των συνοριακών διαφορών της πόλης μέσω διαιτησίας."
+            },
+            {
+                word: "Γειτονική Πόλη",
+                explanation: "Η Μελιταία, μία από τις γειτονικές πόλεις με την οποία η Πεύμα είχε συνοριακές διαμάχες και η οποία δεν ανήκε στο Κοινό της Αχαΐας Φθιώτιδος."
+            },
+            {
+                word: "Διαφωνία",
+                explanation: "Η πολιτική διαμάχη που είχε η Πεύμα για τα όρια της επικράτειάς της με γειτονικές πόλεις, όπως η Μελιταία και οι Φιλιαδών."
+            },
+            {
+                word: "Αυτονομία",
+                explanation: "Η πολιτική και οικονομική ανεξαρτησία της Πεύμα, η οποία τεκμηριώνεται από την κοπή του δικού της νομίσματος."
+            },
+            {
+                word: "Θεσμοί",
+                explanation: "Τα κοινωνικά και πολιτικά συστήματα της πόλης, για τα οποία οι ανασκαφές παρέχουν πληροφορίες μέσω των ευρημάτων και των επιγραφών."
+            },
+            {
+                word: "Βάρη αργαλειού",
+                explanation: "Πάνω από 200 τέτοια αντικείμενα (αγνημονάρια) βρέθηκαν σε μία μόνο οικία, υπογραμμίζοντας τη μεγάλη σημασία της υφαντικής στην οικιακή οικονομία."
+            },
+            {
+                word: "Υφαντική",
+                explanation: "Η κεντρική οικιακή δραστηριότητα, τεκμηριωμένη από πλήθος ευρημάτων όπως αγνημονάρια, ρόκες και αδράχτια στα νοικοκυριά της Πεύμα."
+            },
+            {
+                word: "Κεραμικά",
+                explanation: "Βρέθηκαν περίπου 400 τέτοια αγγεία σε ένα μόνο κτίριο, υποδεικνύοντας την έντονη οικιακή χρήση και τις διατροφικές συνήθειες."
+            },
+            {
+                word: "Πήλινα ειδώλια",
+                explanation: "Περισσότερα από 510 θραύσματα τέτοιων ειδωλίων βρέθηκαν, πιθανώς να σχετίζονται με λατρευτικές πρακτικές των κατοίκων."
+            },
+            {
+                word: "Θυμιατήρια",
+                explanation: "Ευρήματα που σχετίζονται με τη θρησκευτική λατρεία, υποδηλώνοντας τη χρήση αρωματικών ουσιών σε τελετουργίες εντός των σπιτιών."
+            },
+            {
+                word: "Πτολεμαϊκό νόμισμα",
+                explanation: "Η εύρεσή του μαρτυρά την ύπαρξη εμπορικών επαφών της Πεύμα με μακρινά κέντρα, όπως η Αίγυπτος."
+            },
+            {
+                word: "Εμπόριο κεραμικής",
+                explanation: "Η πόλη εισήγαγε αγγεία από άλλα κέντρα, όπως η Φεραία, υποδεικνύοντας τη συμμετοχή της σε περιφερειακά δίκτυα εμπορίου."
+            },
+            {
+                word: "Κατοικία",
+                explanation: "Το κτίριο με κωδικό 10 που έδωσε πλούσια δεδομένα και πάνω από 700 μεταλλικά αντικείμενα, λόγω της ξαφνικής εγκατάλειψης γύρω στο 265 π.Χ."
+            },
+            {
+                word: "Μεταλλικά ευρήματα",
+                explanation: "Πάνω από 700 τέτοια αντικείμενα βρέθηκαν στην Οικία 10, παρέχοντας πληροφορίες για τις οικονομικές και οικιακές δραστηριότητες."
+            },
+            {
+                word: "Ανασκαφή",
+                explanation: "Η συστηματική έρευνα του χώρου, η οποία επιτρέπει τη λεπτομερή καταγραφή του περιεχομένου των σπιτιών λόγω της σύντομης κατοίκησης."
+            },
+            {
+                word: "Καναδικό Ινστιτούτο",
+                explanation: "Ο φορέας που στηρίζει και εποπτεύει το αρχαιολογικό έργο (KKAP) στην Πεύμα, σε συνεργασία με την Εφορεία."
+            },
+            {
+                word: "Συνεργαζόμενοι",
+                explanation: "Το Πανεπιστήμιο της Αλμπέρτα και η Εφορεία Αρχαιοτήτων Λάρισας, οι οποίοι συνεργάζονται για τις ανασκαφές και τη μελέτη της αρχαίας πόλης."
+            },
+            {
+                word: "Επιφανειακή έρευνα",
+                explanation: "Η εντατική αρχική φάση της μελέτης του χώρου, η οποία βοήθησε στη χαρτογράφηση και την κατανόηση της αστικής οργάνωσης."
+            },
+            {
+                word: "Χωρική οργάνωση",
+                explanation: "Η μελέτη του χώρου που βοήθησε στην τεκμηρίωση της χρονολόγησης της θέσης και της διάταξης των δραστηριοτήτων εντός της πόλης."
+            },
+            {
+                word: "Διατήρηση",
+                explanation: "Η Πεύμα είναι ένα σπάνιο παράδειγμα αρχαίας ελληνικής πόλης που έχει διατηρηθεί με τόσο ολοκληρωμένο τρόπο, προσφέροντας μοναδικά δεδομένα."
+            },
+            {
+                word: "Στρατιωτικός χαρακτήρας",
+                explanation: "Η ισχυρή οχύρωση και η στρατηγική της θέση τονίζουν τον σημαντικό ρόλο της πόλης στην άμυνα και τον έλεγχο της περιοχής."
+            },
+            {
+                word: "Αστική εξέλιξη",
+                explanation: "Η μελέτη της πόλης συμβάλλει στην καλύτερη κατανόηση του πώς οργανώνονταν και εξελίσσονταν οι ελληνιστικοί οικισμοί."
+            },
+            {
+                word: "Περιφερειακό δίκτυο",
+                explanation: "Η πόλη ήταν πλήρως ενταγμένη στο ευρύτερο δίκτυο πόλεων και εμπορικών οδών της Θεσσαλίας."
+            },
+            {
+                word: "Στρατηγική δίοδος",
+                explanation: "Η κρίσιμη γεωγραφική θέση της Πεύμα, η οποία της επέτρεπε να ελέγχει το πέρασμα από την κοιλάδα του Ενιπέα προς τον Αλμυρό."
+            },
+            {
+                word: "Θεσσαλία",
+                explanation: "Η ευρύτερη γεωγραφική περιοχή της Ελλάδας στην οποία ανήκε η πόλη και το Κοινό της Αχαΐας Φθιώτιδος."
+            }
         ];
 
         // Ελληνικό αλφάβητο (χωρίς τόνους)
@@ -595,16 +830,15 @@
         const backgroundImage = document.getElementById('backgroundImage');
         const imageContainer = document.getElementById('imageContainer');
         const hangmanWrapper = document.getElementById('hangmanWrapper');
-        const errorCounter = document.getElementById('errorCounter');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const winBtn = document.getElementById('winBtn');
         const lostText = document.getElementById('lostText');
         const winText = document.getElementById('winText');
         const winImage = document.getElementById('winImage');
+        const scrollingTextContainer = document.getElementById('scrollingTextContainer');
+        const scrollingText = document.getElementById('scrollingText');
         
         // Στοιχεία από το παιχνίδι κρεμάλα
         const wordDisplay = document.getElementById('wordDisplay');
+        const explanationDisplay = document.getElementById('explanationDisplay');
         const message = document.getElementById('message');
         const attempts = document.getElementById('attempts');
         const usedLetters = document.getElementById('usedLetters');
@@ -613,6 +847,7 @@
         const wordDisplayContainer = document.getElementById('wordDisplayContainer');
         const keyboardContainer = document.getElementById('keyboardContainer');
         const gameStatus = document.getElementById('gameStatus');
+        const gameOverButtons = document.getElementById('gameOverButtons');
 
         // ΚΑΤΑΣΤΑΣΗ ΠΑΙΧΝΙΔΙΟΥ
         let gameState = {
@@ -622,6 +857,7 @@
             isSwinging: false,
             hasWon: false,
             hasLost: false,
+            selectedWordData: null,
             selectedWord: '',
             selectedWordNormalized: '',
             guessedLetters: [],
@@ -681,11 +917,11 @@
                 .replace(/[άἀἁἂἃἄἅἆἇὰάᾀᾁᾂᾃᾄᾅᾆᾇᾰᾱᾲᾳᾴᾶᾷ]/g, 'α')
                 .replace(/[έἐἑἒἓἔἕὲέ]/g, 'ε')
                 .replace(/[ήἠἡἢἣἤἥἦἧὴήᾐᾑᾒᾓᾔᾕᾖᾗῂῃῄῆῇ]/g, 'η')
-                .replace(/[ίἰἱἲἳἴἵὶίῐῑῒΐῖῗ]/g, 'ι')
+                .replace(/[ίἰἱἲἳἴἵὶίϊΐῐῑῒΐῖῗ]/g, 'ι')
                 .replace(/[όὀὁὂὃὄὅὸό]/g, 'ο')
-                .replace(/[ύὐὑὒὓὔὕὖὗὺύῠῡῢΰῦῧ]/g, 'υ')
+                .replace(/[ύὐὑὒὓὔὕὖὗὺύϋΰῠῡῢΰῦῧ]/g, 'υ')
                 .replace(/[ώὠὡὢὣὤὥὦὧὼώᾠᾡᾢᾣᾤᾥᾦᾧῲῳῴῶῷ]/g, 'ω')
-                .replace(/ς/g, 'σ'); // Προσθήκη: μετατροπή τελικού σίγμα σε σίγμα
+                .replace(/ς/g, 'σ');
         }
 
         function getClipPathForCoord(coord) {
@@ -773,6 +1009,12 @@
             wordDisplayContainer.style.width = lettersPercentages.width + '%';
             wordDisplayContainer.style.height = lettersPercentages.height + '%';
             
+            // Ρύθμιση θέσης scrolling text (πάνω από το letters area)
+            scrollingTextContainer.style.left = lettersPercentages.left + '%';
+            scrollingTextContainer.style.top = (lettersPercentages.top - 10) + '%';
+            scrollingTextContainer.style.width = lettersPercentages.width + '%';
+            scrollingTextContainer.style.height = '60px';
+            
             const alphabetPercentages = calculateRelativePercentages().alphabet;
             keyboardContainer.style.left = alphabetPercentages.left + '%';
             keyboardContainer.style.top = alphabetPercentages.top + '%';
@@ -784,11 +1026,17 @@
             gameStatus.style.top = scorePercentages.top + '%';
             gameStatus.style.width = scorePercentages.width + '%';
             gameStatus.style.height = scorePercentages.height + '%';
+            
+            // Ρύθμιση θέσης game over buttons (κάτω από το score area)
+            gameOverButtons.style.left = scorePercentages.left + '%';
+            gameOverButtons.style.top = (scorePercentages.top + scorePercentages.height + 10) + '%';
+            gameOverButtons.style.width = scorePercentages.width + '%';
         }
 
         // ΣΥΝΑΡΤΗΣΕΙΣ ΠΑΙΧΝΙΔΙΟΥ ΚΡΕΜΑΛΑ
         function initGame() {
-            gameState.selectedWord = words[Math.floor(Math.random() * words.length)];
+            gameState.selectedWordData = wordData[Math.floor(Math.random() * wordData.length)];
+            gameState.selectedWord = gameState.selectedWordData.word;
             gameState.selectedWordNormalized = normalizeGreekText(gameState.selectedWord);
             
             gameState.guessedLetters = [];
@@ -806,6 +1054,12 @@
             updateUsedLetters();
             message.textContent = '';
             message.className = 'message';
+            
+            // Επαναφορά της εμφάνισης
+            wordDisplay.style.display = 'flex';
+            explanationDisplay.style.display = 'none';
+            scrollingTextContainer.style.display = 'none';
+            gameOverButtons.style.display = 'none';
             
             createKeyboard();
             
@@ -903,7 +1157,6 @@
 
         function updateAttempts() {
             attempts.textContent = 7 - gameState.wrongAttempts;
-            errorCounter.textContent = `Σφάλματα: ${gameState.currentError}/${gameState.maxErrors}`;
         }
 
         function updateUsedLetters() {
@@ -1022,6 +1275,10 @@
             setTimeout(() => {
                 hangmanWrapper.classList.remove('swinging-initial');
                 hangmanWrapper.classList.add('swinging');
+                // Εμφάνιση των κουμπιών μετά το swinging animation
+                setTimeout(() => {
+                    gameOverButtons.style.display = 'flex';
+                }, 1000);
             }, 1000);
         }
 
@@ -1030,41 +1287,66 @@
             
             gameState.isPlaying = false;
             
+            // Κρύβουμε το hangman
             hangmanWrapper.classList.remove('swinging', 'swinging-initial');
             hangmanWrapper.classList.add('fade-out');
             
+            // Εμφανίζουμε το scrolling text με τη λέξη
+            scrollingText.textContent = gameState.selectedWord + " - " + gameState.selectedWord + " - " + gameState.selectedWord + " - " + gameState.selectedWord;
+            scrollingTextContainer.style.display = 'block';
+            
+            // Κρύβουμε το word display και εμφανίζουμε την επεξήγηση
+            wordDisplay.style.display = 'none';
+            explanationDisplay.textContent = gameState.selectedWordData.explanation;
+            explanationDisplay.style.display = 'block';
+            
+            // Προσθέτουμε μερικά ακόμα effects
             setTimeout(() => {
                 winImage.classList.add('visible');
                 winImage.classList.add('move-right');
                 winText.style.display = 'block';
                 const timestamp = new Date().getTime();
                 winImage.src = 'https://github.com/conchr/Hangman-Original/raw/main/Hangman%20run.gif?' + timestamp;
-            }, 2000);
+                
+                // Εμφάνιση των κουμπιών μετά από λίγο
+                setTimeout(() => {
+                    gameOverButtons.style.display = 'flex';
+                }, 1000);
+            }, 1000);
         }
 
         function resetGame() {
             initGame();
         }
 
+        function playAgain() {
+            initGame();
+        }
+
+        function returnToGames() {
+            window.location.href = 'https://conchr.github.io/Games/';
+        }
+
         // Cross-fade animation
         function startCrossFade() {
+            // Fade out του splash screen
             splashScreen.classList.add('fade-out');
             
+            // Ταυτόχρονα fade in του game container
             setTimeout(() => {
-                imageContainer.style.opacity = '1';
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    applyRelativePercentages();
-                }, 1500);
+                imageContainer.classList.add('fade-in');
             }, 300);
+            
+            // Απόκρυψη του splash screen μετά το animation
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                applyRelativePercentages();
+            }, 1800);
         }
 
         // EVENT LISTENERS
         window.addEventListener('resize', applyRelativePercentages);
         backgroundImage.addEventListener('load', applyRelativePercentages);
-        startBtn.addEventListener('click', initGame);
-        resetBtn.addEventListener('click', resetGame);
-        winBtn.addEventListener('click', winGame);
 
         document.addEventListener('keydown', function(event) {
             if (gameState.gameOver) return;
@@ -1082,7 +1364,6 @@
 
         window.onload = function() {
             initGame();
-            imageContainer.style.opacity = '0';
         };
     </script>
 </body>
